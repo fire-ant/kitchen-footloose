@@ -3,7 +3,7 @@ an example of plugging footloose into a CI harness to test system configuration 
 
 intially based on a couple of hacks to merege the configs between these two tools:
 
-https://github.com/weaveworks/footloose
+https://github.com/weaveworks/footloose <br />
 https://kitchen.ci
 
 uses bundler to install and run
