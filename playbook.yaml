@@ -3,3 +3,9 @@
 - hosts: all
   become: true
   gather_facts: true
+
+  tasks:
+
+    - name: run os-hardening role
+      include_role:
+        name: dev-sec.os-hardening

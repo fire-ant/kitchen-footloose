@@ -281,8 +281,6 @@ GEM
       hashie (>= 3.4, < 5)
       inspec (>= 2.2.64, < 5.0)
       test-kitchen (>= 2.7, < 3)
-    kitchen-ssh (1.0.3)
-      minitar (~> 0.6)
     libyajl2 (1.2.0)
     license-acceptance (2.1.13)
       pastel (~> 0.7)
@@ -296,7 +294,6 @@ GEM
     memoist (0.16.2)
     method_source (1.0.0)
     mini_mime (1.0.2)
-    minitar (0.9)
     minitest (5.14.3)
     mixlib-config (3.0.9)
       tomlrb
@@ -516,7 +513,6 @@ DEPENDENCIES
   kitchen-ansible
   kitchen-docker
   kitchen-inspec
-  kitchen-ssh
   test-kitchen (~> 2.9.0)
 
 BUNDLED WITH
