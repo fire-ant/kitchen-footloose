@@ -1,0 +1,6 @@
+.kitchen
+kitchen*.yml
+.bundle
+cluster-key*
+vendor/*
+cmd.txt
