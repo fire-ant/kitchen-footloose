@@ -10,12 +10,24 @@ uses bundler to install and run
 
 https://bundler.io
 
-
 and docker (footloose on mac) or ignite as a backend:
 
 http://docker.io <br />
 https://github.com/weaveworks/ignite
 
-interesting because hacking to do vm type things in containers can be problematic. 
-micro-vm's could pose a solution to linux cross platform/distro/version type testing if they were a first class citizen via kitchen driver.
+also using the dev-sec material to validate runs against the ignite containers/VMs:
 
+https://github.com/dev-sec/ansible-collection-hardening/tree/master/roles/os_hardening <br />
+https://github.com/dev-sec/linux-baseline
+
+interesting because hacking to do vm type things in containers can be problematic. 
+micro-vm's could pose a solution to linux cross platform/distro/version type testing if they were a first class citizen via kitchen driver. 
+
+All kitchen commands work natively under bundler including login and referencing nodes y wildcarded substrings:
+
+```
+bundle exec kitchen list
+bundle exec kitchen create
+bundle exec kitchen login ubuntu
+bundle exec kitchen test
+```
