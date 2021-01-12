@@ -5,16 +5,18 @@ driver:
   username: &us root
   # port config in platform section
 
-verifier: 
-  name: inspec
-
 provisioner:
   name: ansible_playbook
   hosts: *name
   require_chef_for_busser: false
   ansible_verbose: false
   require_ansible_repo: true
+  update_package_repos: false
+  roles_path: roles
   ansible_connection: ssh  
+
+verifier: 
+  name: inspec
 
 platforms:
   - name: &plt1 ubuntu%d
@@ -62,18 +64,16 @@ machines:
 transport:
   ssh_key: *ck 
   username: *us
-  max_ssh_sessions: 9
-  connection_timeout: 3
-  connection_retries: 5
+  max_ssh_sessions: 1 # seems to be a bug whereby multiple ssh sessions can confuse/break runs
 
 suites:
-  - name: ssh-hardening
+  - name: os-hardening
     run_list:
     attributes:
     verifier:
       inspec_tests:
-        - name: ssh-hardening
-          url: https://github.com/dev-sec/tests-ssh-hardening
+        - name: os-hardening
+          url: https://github.com/dev-sec/linux-baseline
 
 lifecycle:
   pre_create:
@@ -81,5 +81,7 @@ lifecycle:
       if [[ `uname` == "Darwin" ]]; then export IGNCMD=footloose; else export IGNCMD=ignite; fi; echo $IGNCMD > cmd.txt 
       command -v $(cat cmd.txt) >/dev/null 2>&1 || { echo >&2 "footloose/ignite is not installed. for install instructions see https://github.com/weaveworks/footloose#install"; exit 1; }
       $(cat cmd.txt) create --config kitchen.yml
-  pre_destroy:
-  - local: $(cat cmd.txt) delete --config kitchen.yml
+  pre_destroy: 
+  - local:  |
+      if [[ `uname` == "Darwin" ]]; then export IGNCMD=footloose; else export IGNCMD=ignite; fi; echo $IGNCMD > cmd.txt 
+      $(cat cmd.txt) delete --config kitchen.yml
