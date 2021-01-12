@@ -13,7 +13,7 @@ https://bundler.io
 
 and docker (footloose on mac) or ignite as a backend:
 
-http://docker.io
+http://docker.io <br />
 https://github.com/weaveworks/ignite
 
 interesting because hacking to do vm type things in containers can be problematic. 
