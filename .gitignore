@@ -1,5 +1,4 @@
 .kitchen
-kitchen*.yml
 .bundle
 cluster-key*
 vendor/*

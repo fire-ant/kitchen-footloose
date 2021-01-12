@@ -1,0 +1,85 @@
+---
+driver:
+  name: proxy
+  host: &name 127.0.0.1
+  username: &us root
+  # port config in platform section
+
+verifier: 
+  name: inspec
+
+provisioner:
+  name: ansible_playbook
+  hosts: *name
+  require_chef_for_busser: false
+  ansible_verbose: false
+  require_ansible_repo: true
+  ansible_connection: ssh  
+
+platforms:
+  - name: &plt1 ubuntu%d
+    provisioner:
+      name: ansible_playbook
+      playbook: playbook.yaml
+      ansible_version: 2.9.6+dfsg-1
+    driver_config:
+      port: &hp1 32700
+      
+  - name: &plt2 centos%d
+    provisioner:
+      name: ansible_playbook
+      playbook: playbook.yaml
+      ansible_version:  2.9.6
+      ansible_binary_path: /usr/local/bin/ #RHEL/Centos Specific
+      require_pip3: true #RHEL/Centos Specific
+      ansible_package_name: ansible #RHEL/Centos Specific
+    driver_config:
+      port: &hp2 32701
+
+############# FOOTLOOSE CONFIG ###################
+
+cluster: 
+  name: footloose
+  privateKey: &ck cluster-key
+machines:
+- count: 1
+  spec:
+    image: weaveworks/ignite-ubuntu:20.04
+    name: *plt1
+    portMappings:
+    - containerPort: 22
+      hostport: *hp1 
+- count: 1
+  spec:
+    image: weaveworks/ignite-centos:7
+    name: *plt2
+    portMappings:
+    - containerPort: 22
+      hostport: *hp2 
+
+############# FOOTLOOSE CONFIG END ###############
+
+transport:
+  ssh_key: *ck 
+  username: *us
+  max_ssh_sessions: 9
+  connection_timeout: 3
+  connection_retries: 5
+
+suites:
+  - name: ssh-hardening
+    run_list:
+    attributes:
+    verifier:
+      inspec_tests:
+        - name: ssh-hardening
+          url: https://github.com/dev-sec/tests-ssh-hardening
+
+lifecycle:
+  pre_create:
+  - local: |
+      if [[ `uname` == "Darwin" ]]; then export IGNCMD=footloose; else export IGNCMD=ignite; fi; echo $IGNCMD > cmd.txt 
+      command -v $(cat cmd.txt) >/dev/null 2>&1 || { echo >&2 "footloose/ignite is not installed. for install instructions see https://github.com/weaveworks/footloose#install"; exit 1; }
+      $(cat cmd.txt) create --config kitchen.yml
+  pre_destroy:
+  - local: $(cat cmd.txt) delete --config kitchen.yml
